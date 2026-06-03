@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <title>Admin — ZBighype</title>
+  <meta name="description" content="Billing X admin dashboard with realtime analytics." />
+
+  <!-- Protect admin.html from direct access. Runs before any content renders. -->
+  <script>
+    if (localStorage.getItem('adminLoggedIn') !== 'true') {
+      window.location.replace('login.html');
+    }
+  </script>
+
+  <link rel="stylesheet" href="CSS/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="bg-particles" aria-hidden="true">
+    <div class="milky-way"></div>
+    <div class="space-sun"></div>
+    <div class="shooting-star ss-1"></div>
+    <div class="shooting-star ss-2"></div>
+    <div class="shooting-star ss-3"></div>
+    <div class="space-planet"></div>
+    <div class="space-earth"></div>
+    <div class="space-moon-orbit"><div class="space-moon"></div></div>
+    <div class="space-ship">🚀</div>
+    <div class="ufo ufo-1">🛸</div>
+    <div class="ufo ufo-2">🛸</div>
+    <div class="ufo ufo-3">🛸</div>
+  </div>
+
+  <header class="site-header" data-glow>
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="ZBighype Home">
+        <span class="brand-mark" aria-hidden="true">BX</span>
+        <span class="brand-text">ZBighype</span>
+      </a>
+
+      <nav class="nav" aria-label="Primary">
+        <span class="pill" style="font-weight:900;">Admin</span>
+      </nav>
+
+      <div style="width:44px;"></div>
+    </div>
+  </header>
+
+  <div class="admin-shell">
+    <main class="container">
+      <div class="admin-grid">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" aria-label="Admin sidebar">
+          <div class="admin-header" style="padding: 0; overflow:hidden;">
+            <div class="admin-sidebar-top">
+              <div class="admin-user">
+                <div class="admin-avatar">🛡️</div>
+                <div>
+                  <div class="admin-user-name" id="adminName">Welcome Admin</div>
+                  <div class="admin-user-role">Billing X • Owner</div>
+                </div>
+              </div>
+            </div>
+            <nav class="admin-nav" aria-label="Admin navigation">
+              <a class="admin-nav-link is-active" href="#" data-nav="dashboard">Dashboard</a>
+              <a class="admin-nav-link" href="#" data-nav="downloads">Downloads</a>
+              <a class="admin-nav-link" href="#" data-nav="visitors">Visitors</a>
+              <a class="admin-nav-link" href="#" data-nav="gallery">Gallery Manager</a>
+              <a class="admin-nav-link" href="#" data-nav="users">Users</a>
+              <a class="admin-nav-link" href="#" data-nav="settings">Settings</a>
+            </nav>
+            <div class="admin-sidebar-bottom" style="display:flex; gap: 10px; flex-direction:column;">
+              <button id="logoutBtn" class="btn btn-ghost" type="button" style="width:100%; justify-content:center;">
+                Logout
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Content -->
+        <section class="admin-content" aria-label="Admin dashboard content">
+          <div class="admin-header" style="margin-bottom: 18px;">
+            <div class="admin-kicker">ZBighype • Billing X</div>
+            <div class="admin-title">Admin Dashboard</div>
+            <p class="admin-sub">Realtime visitors & downloads analytics with premium glass UI.</p>
+
+            <div class="admin-header-actions">
+              <div class="pill" id="currentDate">—</div>
+              <div class="pill" id="currentTime">—</div>
+              <div class="pill" style="margin-left:auto;">Realtime • Supabase</div>
+            </div>
+          </div>
+
+          <!-- Widgets -->
+          <div class="admin-widgets">
+            <div class="stat-card widget" style="grid-column: span 1;">
+              <div class="widget-top"><div class="widget-icon">👥</div><div>
+                <div class="widget-title">Total Visitors</div>
+                <div class="widget-hint">All time</div>
+              </div></div>
+              <div class="widget-value" id="statTotalVisitors">0</div>
+            </div>
+
+            <div class="stat-card widget" style="grid-column: span 1;">
+              <div class="widget-top"><div class="widget-icon">⬇️</div><div>
+                <div class="widget-title">Total Downloads</div>
+                <div class="widget-hint">All time</div>
+              </div></div>
+              <div class="widget-value" id="statTotalDownloads">0</div>
+            </div>
+
+            <div class="stat-card widget" style="grid-column: span 1;">
+              <div class="widget-top"><div class="widget-icon">📅</div><div>
+                <div class="widget-title">Visitors Today</div>
+                <div class="widget-hint">Local date</div>
+              </div></div>
+              <div class="widget-value" id="statVisitorsToday">0</div>
+            </div>
+
+            <div class="stat-card widget" style="grid-column: span 1;">
+              <div class="widget-top"><div class="widget-icon">🗂️</div><div>
+                <div class="widget-title">Downloads Today</div>
+                <div class="widget-hint">Local date</div>
+              </div></div>
+              <div class="widget-value" id="statDownloadsToday">0</div>
+            </div>
+          </div>
+
+          <div class="admin-widgets" style="margin-top: 14px;">
+            <div class="stat-card widget" style="grid-column: span 2;">
+              <div class="widget-top"><div class="widget-icon">⚡</div><div>
+                <div class="widget-title">Active Users</div>
+                <div class="widget-hint">Based on recent activity (latest 5 mins)</div>
+              </div></div>
+              <div class="widget-value" id="statActiveUsers">0</div>
+            </div>
+
+            <div class="stat-card widget" style="grid-column: span 2;">
+              <div class="widget-top"><div class="widget-icon">🟢</div><div>
+                <div class="widget-title">Realtime Status</div>
+                <div class="widget-hint">Subscription health</div>
+              </div></div>
+              <div class="widget-value" id="realtimeStatus">Connecting…</div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="admin-charts">
+            <div class="chart-card card" style="padding: 18px;">
+              <div class="chart-head">
+                <div>
+                  <div class="chart-kicker">Analytics</div>
+                  <div class="chart-title">Visitors Analytics</div>
+                </div>
+                <div class="chart-legend"><span class="legend-dot" style="background: rgba(255,255,255,.8)"></span>Visitors</div>
+              </div>
+              <canvas id="chartVisitors" height="120"></canvas>
+            </div>
+
+            <div class="chart-card card" style="padding: 18px;">
+              <div class="chart-head">
+                <div>
+                  <div class="chart-kicker">Analytics</div>
+                  <div class="chart-title">Downloads Analytics</div>
+                </div>
+                <div class="chart-legend"><span class="legend-dot" style="background: rgba(255,255,255,.45)"></span>Downloads</div>
+              </div>
+              <canvas id="chartDownloads" height="120"></canvas>
+            </div>
+          </div>
+
+          <!-- Logs -->
+          <div class="admin-sections">
+            <div class="admin-section card">
+              <h2>Latest Visitors (50)</h2>
+              <p id="visitorsLogHint">Fetching…</p>
+              <div style="overflow:auto; margin-top: 10px;">
+                <table style="width:100%; border-collapse:collapse;">
+                  <thead>
+                    <tr style="color: rgba(255,255,255,.72); text-align:left; font-size: 13px;">
+                      <th style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08);">Time</th>
+                      <th style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08);">Country</th>
+                      <th style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08);">Browser</th>
+                      <th style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08);">Device</th>
+                      <th style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08);">Page</th>
+                    </tr>
+                  </thead>
+                  <tbody id="latestVisitorsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="admin-section card">
+              <h2>Latest Downloads (50)</h2>
+              <p id="downloadsLogHint">Fetching…</p>
+              <div style="overflow:auto; margin-top: 10px;">
+                <table style="width:100%; border-collapse:collapse;">
+                  <thead>
+                    <tr style="color: rgba(255,255,255,.72); text-align:left; font-size: 13px;">
+                      <th style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08);">Time</th>
+                      <th style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08);">Country</th>
+                      <th style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08);">Browser</th>
+                      <th style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08);">Device</th>
+                    </tr>
+                  </thead>
+                  <tbody id="latestDownloadsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-footer-note">
+            <div class="glow-pill">Security note: This is a localStorage gate for admin UI.</div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="JS/supabase-config.js"></script>
+  <script src="JS/analytics.js"></script>
+  <script src="JS/auth-helpers.js"></script>
+  <script src="JS/admin.js"></script>
+  <script src="JS/theme.js"></script>
+</body>
+</html>
+
